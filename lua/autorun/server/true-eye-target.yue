@@ -1,0 +1,24 @@
+:Alive, :GetAimVector = FindMetaTable( "Player" )
+:SetEyeTarget = FindMetaTable( "Entity" )
+vector_origin = vector_origin
+LerpVector = LerpVector
+:GetHumans = player
+:TraceLine = util
+
+trace = {
+    collisiongroup: COLLISION_GROUP_PLAYER
+    mask: MASK_PLAYERSOLID
+}
+
+timer.Create "True Eye Target", 0.05, 0, ->
+    players = GetHumans!
+    for index = 1, #players
+        ply = players[ index ]
+        if Alive( ply )
+            trace.start = ply\EyePos!
+            trace.endpos = trace.start + GetAimVector( ply ) * 128
+            trace.filter = ply
+
+            eyeTarget = LerpVector( 0.25, ply.m_vLastEyeTarget or vector_origin, TraceLine( trace ).HitPos )
+            ply.m_vLastEyeTarget = eyeTarget
+            SetEyeTarget( ply, eyeTarget )
