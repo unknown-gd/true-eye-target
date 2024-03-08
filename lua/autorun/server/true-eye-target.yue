@@ -5,9 +5,11 @@ LerpVector = LerpVector
 :GetHumans = player
 :TraceLine = util
 
+traceResult = {}
 trace = {
     collisiongroup: COLLISION_GROUP_PLAYER
     mask: MASK_PLAYERSOLID
+    output: traceResult
 }
 
 timer.Create "True Eye Target", 0.05, 0, ->
@@ -18,7 +20,8 @@ timer.Create "True Eye Target", 0.05, 0, ->
             trace.start = ply\EyePos!
             trace.endpos = trace.start + GetAimVector( ply ) * 128
             trace.filter = ply
+            TraceLine( trace )
 
-            eyeTarget = LerpVector( 0.25, ply.m_vLastEyeTarget or vector_origin, TraceLine( trace ).HitPos )
+            eyeTarget = LerpVector( 0.25, ply.m_vLastEyeTarget or vector_origin, traceResult.HitPos )
             ply.m_vLastEyeTarget = eyeTarget
             SetEyeTarget( ply, eyeTarget )
