@@ -1,8 +1,8 @@
-:Alive, :GetAimVector = FindMetaTable( "Player" )
+:IsBot, :Alive, :GetAimVector = FindMetaTable( "Player" )
 :SetEyeTarget = FindMetaTable( "Entity" )
 vector_origin = vector_origin
 LerpVector = LerpVector
-:GetHumans = player
+:Iterator = player
 :TraceLine = util
 
 traceResult = {}
@@ -13,15 +13,15 @@ trace = {
 }
 
 timer.Create "True Eye Target", 0.05, 0, ->
-    players = GetHumans!
-    for index = 1, #players
-        ply = players[ index ]
-        if Alive( ply )
-            trace.start = ply\EyePos!
-            trace.endpos = trace.start + GetAimVector( ply ) * 128
-            trace.filter = ply
-            TraceLine( trace )
+    for _, ply in Iterator!
+        if IsBot( ply ) or not Alive( ply )
+            continue
 
-            eyeTarget = LerpVector( 0.25, ply.m_vLastEyeTarget or vector_origin, traceResult.HitPos )
-            ply.m_vLastEyeTarget = eyeTarget
-            SetEyeTarget( ply, eyeTarget )
+        trace.start = ply\EyePos!
+        trace.endpos = trace.start + GetAimVector( ply ) * 128
+        trace.filter = ply
+        TraceLine( trace )
+
+        eyeTarget = LerpVector( 0.25, ply.m_vLastEyeTarget or vector_origin, traceResult.HitPos )
+        ply.m_vLastEyeTarget = eyeTarget
+        SetEyeTarget( ply, eyeTarget )
